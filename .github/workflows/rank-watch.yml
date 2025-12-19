@@ -3,15 +3,28 @@ name: ASICMinerValue Rank Watch
 on:
   workflow_dispatch:
   schedule:
-    - cron: "45 8 * * *"   # UTC 08:45 = 北京/香港 16:45
+    - cron: "45 8 * * *"   # UTC 08:45 = 北京 / 香港 16:45
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r requirements.txt
-      - run: python check_rank.py
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run rank checker
+        run: python check_rank.py
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rank-report
+          path: rank_report.csv
